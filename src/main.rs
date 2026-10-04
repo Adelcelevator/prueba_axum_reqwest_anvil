@@ -1,14 +1,14 @@
 mod controllers;
 mod models;
 mod services;
+mod utils;
 
 use axum::{
-    Router, routing::get,
+    Router, routing::{get, post},
 };
 use dotenvy::dotenv;
-use ms_general_utils::logging::logging_utils;
 
-use crate::controllers::blocks_controller::get_block_name_controller;
+use crate::{controllers::{blocks_controller::get_block_name_controller, transaction_controller::simulate_gas}, utils::logging::logging_utils};
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
@@ -16,9 +16,15 @@ async fn main() {
     let _log = logging_utils::init_tracing("/tmp".to_string(), 
                                                        "pruebas.log".to_string());
 
-    log::info!("Conexion realizada");
-    let app = Router::new()
-                              .route("/block/getName", get(get_block_name_controller));
+    let block_routes = Router::new()
+                                .route("/getName", get(get_block_name_controller));
+    
+    let transaction_routes = Router::new()
+                                .route("/simulateGas", post(simulate_gas));
+
+    let app = Router::new().nest("/blockTest", Router::new()
+                                                                            .nest("/block", block_routes)
+                                                                            .nest("/transaction", transaction_routes));
     log::info!("Escuchando peticiones en 8080");
     let listener = tokio::net::TcpListener::bind("[::]:8080").await.unwrap();
     axum::serve(listener, app).await.unwrap();
