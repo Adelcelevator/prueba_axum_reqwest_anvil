@@ -8,7 +8,7 @@ use axum::{
 };
 use dotenvy::dotenv;
 
-use crate::{controllers::{blocks_controller::get_block_name_controller, transaction_controller::simulate_gas}, utils::logging::logging_utils};
+use crate::{controllers::{blocks_controller::get_block_name_controller, transaction_controller::{execute_transaction, simulate_gas}}, utils::logging::logging_utils};
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() {
@@ -20,7 +20,8 @@ async fn main() {
                                 .route("/getName", get(get_block_name_controller));
     
     let transaction_routes = Router::new()
-                                .route("/simulateGas", post(simulate_gas));
+                                .route("/simulateGas", post(simulate_gas))
+                                .route("/executeTransaction", post(execute_transaction));
 
     let app = Router::new().nest("/blockTest", Router::new()
                                                                             .nest("/block", block_routes)

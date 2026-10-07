@@ -21,10 +21,3 @@ pub struct BlockGasSimulationRes{
     pub jsonrpc: String,
     pub result: String,
 }
-
-#[derive(Clone, Serialize, Deserialize,Debug)]
-pub struct BlockGasPriceRes{
-    pub id: i32,
-    pub jsonrpc: String,
-    pub result: String,
-}

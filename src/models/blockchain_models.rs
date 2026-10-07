@@ -13,3 +13,10 @@ pub struct BlockChainError{
     pub code:i32,
     pub message:String,
 }
+
+#[derive(Clone, Serialize, Deserialize,Debug)]
+pub struct BlockChainResponse<T>{
+    pub id: i32,
+    pub jsonrpc: String,
+    pub result: T,
+}
